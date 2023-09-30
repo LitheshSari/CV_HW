@@ -10,3 +10,4 @@ link_libraries(${OpenCV_LIBS})
 
 add_executable(apple src/apple.cpp)
 add_executable(plates src/plates.cpp)
+add_executable(armor src/armor.cpp)
