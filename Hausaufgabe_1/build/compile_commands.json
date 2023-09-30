@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/home/pan/code/Hausaufgabe/build",
+  "command": "/usr/bin/g++   -I/home/pan/code/Hausaufgabe/include -isystem /usr/local/include/opencv  -g   -o CMakeFiles/plates.dir/src/plates.cpp.o -c /home/pan/code/Hausaufgabe/src/plates.cpp",
+  "file": "/home/pan/code/Hausaufgabe/src/plates.cpp"
+},
+{
+  "directory": "/home/pan/code/Hausaufgabe/build",
+  "command": "/usr/bin/g++   -I/home/pan/code/Hausaufgabe/include -isystem /usr/local/include/opencv  -g   -o CMakeFiles/apple.dir/src/apple.cpp.o -c /home/pan/code/Hausaufgabe/src/apple.cpp",
+  "file": "/home/pan/code/Hausaufgabe/src/apple.cpp"
+}
+]
