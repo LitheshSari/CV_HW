@@ -1,4 +1,0 @@
-/home/pan/code/Hausaufgabe/build/CMakeFiles/rebuild_cache.dir
-/home/pan/code/Hausaufgabe/build/CMakeFiles/plates.dir
-/home/pan/code/Hausaufgabe/build/CMakeFiles/edit_cache.dir
-/home/pan/code/Hausaufgabe/build/CMakeFiles/apple.dir
