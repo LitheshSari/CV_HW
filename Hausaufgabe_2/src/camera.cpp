@@ -25,6 +25,11 @@ public:
         cv::circle(plane_, cv_point_, 2, cv::Scalar{255, 255, 255}, -1);
     }
 
+    void imwrite()
+    {
+        cv::imwrite("JiaoLoong.jpg", plane_);
+    }
+
 private:
     cv::Mat plane_;
     cv::Point2d cv_point_;
@@ -80,5 +85,6 @@ int main(int argc, char **argv)
     }
 
     drawer.imshow();
+    drawer.imwrite();
     cv::waitKey(-1);
 }
