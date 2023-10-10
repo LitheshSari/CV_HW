@@ -13,7 +13,7 @@ class Drawer
 public:
     Drawer()
     {
-        plane_ = cv::Mat::zeros(cv::Size(1300, 1000), CV_8UC1);
+        plane_ = cv::Mat::zeros(cv::Size(1200, 800), CV_8UC1);
     }
 
     void imshow()
@@ -21,9 +21,9 @@ public:
         cv::imshow("result", plane_);
     }
 
-    cv::Mat getImg()
+    cv::Point2d getPoint()
     {
-        return plane_;
+        return cv_point_;
     }
 
     void drawPoint(Eigen::Vector3d point)
@@ -32,7 +32,6 @@ public:
         cv_point_.x = point(0, 0);
         cv_point_.y = point(1, 0);
         cv::circle(plane_, cv_point_, 2, cv::Scalar{255, 255, 255}, -1);
-        cv::circle(img_show, cv_point_, 2, cv::Scalar{255, 255, 255}, -1);
     }
 
     void imwrite()
@@ -103,7 +102,7 @@ int main(int argc, char **argv)
     Camera_Sim camera_sim;
     cv::VideoWriter writer("JiaoLoong.avi",
                            cv::VideoWriter::fourcc('M', 'J', 'P', 'G'),
-                           50, cv::Size(944, 534), true);
+                           50, cv::Size(1200, 800), false);
     for (int j = 0; j < kCount; ++j)
     {
         Drawer drawer;
@@ -116,7 +115,7 @@ int main(int argc, char **argv)
         int count;
         std::cin >> count;
 
-        img_show = cv::Mat::zeros(cv::Size(944, 534), CV_8UC1);
+        img_show = cv::Mat::zeros(cv::Size(1200, 800), CV_8UC1);
 
         for (int i = 0; i < count; ++i)
         {
@@ -127,13 +126,16 @@ int main(int argc, char **argv)
 
             Eigen::Vector3d point = conbined_matrix * pos_vec;
             drawer.drawPoint(point);
+            cv::Point2d point2d = drawer.getPoint();
+            cv::circle(img_show, point2d, 2, cv::Scalar{255, 255, 255}, -1);
         }
         fclose(stdin);
+
         drawer.imshow();
         writer << img_show;
         cv::waitKey(50);
     }
 
-    writer.release();
     cv::waitKey(-1);
+    writer.release();
 }
