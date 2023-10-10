@@ -6,14 +6,23 @@
 
 #define PI acos(-1)
 
-cv::Mat img_show;
+constexpr int WIDTH = 1200;
+constexpr int HEIGHT = 800;
 
 class Drawer
 {
 public:
     Drawer()
     {
-        plane_ = cv::Mat::zeros(cv::Size(1200, 800), CV_8UC1);
+        plane_ = cv::Mat::zeros(cv::Size(WIDTH, HEIGHT), CV_8UC1);
+        writer_ = cv::VideoWriter("JiaoLoong.avi",
+                                  cv::VideoWriter::fourcc('M', 'J', 'P', 'G'),
+                                  50, cv::Size(WIDTH, HEIGHT), false);
+    }
+
+    ~Drawer()
+    {
+        writer_.release();
     }
 
     void imshow()
@@ -24,6 +33,12 @@ public:
     cv::Point2d getPoint()
     {
         return cv_point_;
+    }
+
+    void writeVideo()
+    {
+        writer_ << plane_;
+        plane_ = cv::Mat::zeros(cv::Size(WIDTH, HEIGHT), CV_8UC1);
     }
 
     void drawPoint(Eigen::Vector3d point)
@@ -42,6 +57,7 @@ public:
 private:
     cv::Mat plane_;
     cv::Point2d cv_point_;
+    cv::VideoWriter writer_;
 };
 
 class Camera_Sim
@@ -55,6 +71,8 @@ public:
             0., 0., 1., 0.;
         Eigen::Quaterniond quaternion(-0.5, 0.5, 0.5, -0.5);
         rotation_matrix_ = quaternion.matrix().transpose().cast<double>();
+        rotate_axis_ = quaternion.matrix().cast<double>() * Eigen::Vector3d(0, 1., 0);
+
         transformation_matrix_(3, 3) = 1;
         transformation_matrix_.block(0, 0, 3, 3) = rotation_matrix_;
         transformation_matrix_.block(0, 3, 3, 1) = -rotation_matrix_ * Eigen::Vector3d(2., 2., 2.);
@@ -63,9 +81,7 @@ public:
 
     void updateQuaternion(double angle)
     {
-        Eigen::Quaterniond quaternion_cam(-0.5, 0.5, 0.5, -0.5);
-        Eigen::Vector3d rotate_axis = quaternion_cam.matrix().cast<double>() * Eigen::Vector3d(0, 1., 0);
-        rotate_axis = sin(angle / 2) * rotate_axis;
+        Eigen::Vector3d rotate_axis = sin(angle / 2) * rotate_axis_;
 
         Eigen::Quaterniond new_quaternion(cos(angle / 2), rotate_axis.x(), rotate_axis.y(), rotate_axis.z());
         Eigen::Matrix4d transformation_matrix = transformation_matrix_;
@@ -87,10 +103,13 @@ public:
 
 private:
     Eigen::Matrix<double, 3, 4> inner_matrix_;
+
     Eigen::Matrix3d rotation_matrix_;
     Eigen::Matrix4d transformation_matrix_;
     Eigen::Matrix<double, 3, 4> conbined_matrix_;
     Eigen::Matrix<double, 3, 4> cam_matrix_;
+
+    Eigen::Vector3d rotate_axis_;
 };
 
 int main(int argc, char **argv)
@@ -100,12 +119,10 @@ int main(int argc, char **argv)
     double target = -PI / 2;
     double step_length = target / kCount;
     Camera_Sim camera_sim;
-    cv::VideoWriter writer("JiaoLoong.avi",
-                           cv::VideoWriter::fourcc('M', 'J', 'P', 'G'),
-                           50, cv::Size(1200, 800), false);
+    Drawer drawer;
+
     for (int j = 0; j < kCount; ++j)
     {
-        Drawer drawer;
         target -= step_length;
         camera_sim.updateQuaternion(target);
 
@@ -114,8 +131,6 @@ int main(int argc, char **argv)
         freopen("../points.txt", "r", stdin);
         int count;
         std::cin >> count;
-
-        img_show = cv::Mat::zeros(cv::Size(1200, 800), CV_8UC1);
 
         for (int i = 0; i < count; ++i)
         {
@@ -126,16 +141,13 @@ int main(int argc, char **argv)
 
             Eigen::Vector3d point = conbined_matrix * pos_vec;
             drawer.drawPoint(point);
-            cv::Point2d point2d = drawer.getPoint();
-            cv::circle(img_show, point2d, 2, cv::Scalar{255, 255, 255}, -1);
         }
         fclose(stdin);
 
         drawer.imshow();
-        writer << img_show;
+        drawer.writeVideo();
         cv::waitKey(50);
     }
 
     cv::waitKey(-1);
-    writer.release();
 }
