@@ -75,6 +75,7 @@ int main()
     cv::Mat src = cv::imread("../chess/40.jpg");
     cv::Mat result;
     undistort(src, result, camera_matrix, distortion_coeffs);
+    imshow("result",result);
     waitKey(-1);
     return 0;
 }
