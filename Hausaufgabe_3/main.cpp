@@ -20,12 +20,12 @@ int main()
     freopen("../dollar.txt", "r", stdin);
 
     cv::Mat img;
-    img = cv::Mat::zeros(cv::Size(1000, 600), CV_8UC3);
+    img = cv::Mat::zeros(cv::Size(800, 600), CV_8UC3);
 
     double temp;
     while (std::cin >> temp)
     {
-        cv::circle(img, cv::Point(kCount * 30, temp * 100 - 400), 2, cv::Scalar{0, 255, 0}, 2);
+        cv::circle(img, cv::Point(kCount * 20, temp * 200 - 1100), 2, cv::Scalar{0, 255, 0}, 2);
         data.push_back(temp);
         kCount++;
     }
@@ -63,7 +63,7 @@ int main()
     }
 
     cv::line(img,
-             cv::Point(0, data[0] * 100 - 400), cv::Point(kCount * 30, (data[0] + 30 * x_k1(1, 0)) * 100 - 400),
+             cv::Point(0, data[0] * 200 - 1100), cv::Point(kCount * 20, (data[0] + 30 * x_k1(1, 0)) * 200 - 1100),
              cv::Scalar{0, 255, 0});
     cv::imshow("result", img);
     cv::waitKey(-1);
